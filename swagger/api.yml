@@ -1,0 +1,177 @@
+openapi: '3.0.2'
+info:
+  title: Bid-Tracker RESTfulApi
+  version: '1.0'
+servers:
+  - url: https://loclahost:9000/api/v1
+    description: Bit-Tracker RESTfulApi
+
+tags:
+- name: "Items"
+  description: "items on auction"
+- name: "Users"
+  description: "users participating in auctions and placing bid"
+- name: "Bids"
+  description: "bids placed by users on items"
+
+components:
+
+  schemas:
+    Item:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    User:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    Bid:
+      type: object
+      required:
+        - itemId
+        - userId
+        - amount
+      properties:
+        itemId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        amount:
+          type: float64
+
+paths:
+  /items/{itemID}/winner:
+    get:
+      tags:
+        - "Items"
+      summary: Get a winning bid for an item
+      parameters:
+        - in: path
+          name: itemID
+          required: true
+          schema:
+              type: string
+          description: Item ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bid'
+        '400':
+          description: The specified itemID is invalid (not UUID)
+        '404':
+          description: NOT FOUND, if item not found
+
+  /items/{itemID}/bids:
+    get:
+      tags:
+        - "Items"
+      summary: Get all bids for an item
+      parameters:
+        - in: path
+          name: itemID
+          required: true
+          schema:
+              type: string
+          description: Item ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bid'
+        '400':
+          description: The specified itemID is invalid (not UUID)
+        '404':
+          description: NOT FOUND, if item not found
+    post:
+      tags:
+        - "Items"
+      summary: Place a Bid on the item
+      requestBody:
+        description: A new bid
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: CREATED, if bid is registered
+        '400':
+          description: BAD REQUEST, if bid payload is incorrect
+
+  /users/{userID}/items:
+    get:
+      tags:
+        - "Users"
+      summary: Get all items on which the user has bid
+      parameters:
+        - in: path
+          name: userID
+          required: true
+          schema:
+              type: string
+          description: The user ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          description: The specified userID is invalid (not UUID)
+        '404':
+          description: NOT FOUND, if user ID not found or invalid
+
+# OPTIONAL
+  /items:
+    get:
+      tags:
+        - "Items"
+      summary: Get a list of items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+  /users:
+    get:
+      tags:
+        - "Users"
+      summary: Get a list of users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
