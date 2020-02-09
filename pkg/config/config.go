@@ -28,11 +28,6 @@ const (
 	EnvPrefix = "BID"
 	//APIPrefixV1 URL prefix in API version 1
 	APIPrefixV1 = "/api/v1"
-
-	// ##### GENERAL VARIABLES
-
-	// DefaultHost default host for the services
-	DefaultHost = "loclahost"
 	//DefaultPort default port the service is served on
 	DefaultPort = "9000"
 )
@@ -52,6 +47,5 @@ func bindEnvVariable(name string, fallback interface{}) {
 func SetupEnv() {
 	viper.SetEnvPrefix(EnvPrefix)
 	// General
-	bindEnvVariable("HOST", DefaultHost)
 	bindEnvVariable("PORT", DefaultPort)
 }

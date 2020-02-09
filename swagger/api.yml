@@ -3,7 +3,7 @@ info:
   title: Bid-Tracker RESTfulApi
   version: '1.0'
 servers:
-  - url: https://loclahost:9000/api/v1
+  - url: https://localhost:9000/api/v1
     description: Bit-Tracker RESTfulApi
 
 tags:

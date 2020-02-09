@@ -81,20 +81,23 @@ because each bid is unique - but there is no requirement to optimize it further.
 ```
 git clone https://github.com/vikin91/bid-tracker-go
 cd bid-tracker-go
+
+make help
+
 make vendor
 make build
 make run-demo
 ```
 
+You may change port with environment variable `BID_PORT`. Its default value is `9000`.
+
 Navigate to one of the following URLs:
-- http://localhost:9000/api/v1/users
-- http://localhost:9000/api/v1/items
+- http://localhost:9000/api/v1/user
+- http://localhost:9000/api/v1/item
 - http://localhost:9000/api/v1/item/{itemID}/winner
 - http://localhost:9000/api/v1/item/{itemID}/bids
 - (POST) http://localhost:9000/api/v1/item/{itemID}/bids (to add bid)
-- http://localhost:9000/api/v1/users/{userID}/items
-
-Or see [swagger definition of API](swagger/api.yml)
+- http://localhost:9000/api/v1/user/{userID}/items
 
 For other options see `make help`.
 

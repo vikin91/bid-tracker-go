@@ -22,7 +22,7 @@ SRC = cmd/api/*.go
 help:               ## Show this help (default)
 	@sed -ne '/@sed/!s/## //p' $(MAKEFILE_LIST)
 
-test:               ## Run tests
+test:               ## Run tests and compute test coverage
 	$(GOTEST) -timeout 15s -cover -covermode=atomic -v ./...
 
 test-race:          ## Run tests with race detector
@@ -56,7 +56,7 @@ docker-build:       ## Build Docker image
 docker-run:         ## Run bid tracker in Docker
 	-@docker rm $(BINARY)
 	docker run --name $(BINARY) --rm -d \
-		-p 8080:9000 \
+		-p 9000:9000 \
 		$(DOCKER_IMAGE)
 
 docker-stop:        ## Stop bid-tracker Docker
