@@ -1,5 +1,9 @@
 # Bid-Tracker
 
+Bid-tracker is a simple API program to track users' bids on items put on auctions.
+
+This program has been implemented based on **assignment requirements** (a.k.a _Remote Task SDE version october 2019_) document that is treated as confidential.
+
 ## Assumptions
 
 1. No support for DELETE on Bids (also on all other models)
@@ -8,12 +12,67 @@
   - Get winning bid for item
   - Get all bids for item
   - Get all items on which user has bid
-3. Where optimizing for time and space is in conflict, optimization for time takes priority
+3. Where optimizing for time and space is in conflict, optimization for time takes priority.
+4. Apply the simplest solutions that work - provided the limited time.
 
-## Notes to reviewers
+## Notes to Reviewers
 
 1. `/pkg/storage/storage.go` is not necessary now, but maybe useful for future performance comparison of various data structures
 2. This project was started from my private API-template - this explains the folders structure. For this project, much simpler structure could be used, but I choose to stay with the template.
+
+### Choice of Data Structures
+
+Provided the requirements (e.g., no delete operations), I stared with a simple data structure containing three maps:
+
+```go
+type MapBiddingSystem struct {
+	Items map[uuid.UUID]*models.Item
+    Users map[uuid.UUID]*models.User
+    Bids  map[uuid.UUID]*models.Bid
+}
+```
+
+Next, I implemented most of the tests and benchmarks - especially for the four required functions as specified in the assignment description.
+As a next step, I optimized the code, to obtain `O(1)` in time and space on all four required functions.
+
+This allowed me to simplify the structures to the following:
+
+```go
+type MapBiddingSystem struct {
+	Items map[uuid.UUID]*models.Item
+    Users map[uuid.UUID]*models.User
+}
+
+type User struct {
+	Name       string
+	bids       map[uuid.UUID]*Bid
+	ItemsBid   []*Item
+}
+
+type Item struct {
+	Name         string
+	bids         []*Bid
+	WinningBid   *Bid
+	MaxBidAmount float64
+}
+```
+
+### Concurrency Approach
+
+Next, I wanted to ensure, that no race conditions exist when reading/writing users and items.
+Thanks to the `map`, I need to care about locks only at the level of a single user or single item<sup>[1](#foot1)</sup>.
+Next, I protect the following variables with `RWMutex`es:
+1. `User.ItemsBid`
+2. `User.bids` (despite not being in focus of the requirements)
+3. `Item.WinningBid` and `Item.MaxBidAmount`
+4. `Item.bids`
+
+**Note**:
+`User.bids` could be defined as:
+`bids []*Bid` instead of `bids map[uuid.UUID]*Bid`,
+because each bid is unique - but there is no requirement to optimize it further.
+
+<a name="foot1">[1]</a>: Despite possible, I exclude here the possibility of  race condition between creating a user and using it - reason: not in the scope of the four functions required in the assignment.
 
 ## Building, Running, Testing
 
