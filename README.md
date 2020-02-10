@@ -26,7 +26,7 @@ Provided the requirements (e.g., no delete operations), I stared with a simple d
 
 ```go
 type MapBiddingSystem struct {
-	Items map[uuid.UUID]*models.Item
+    Items map[uuid.UUID]*models.Item
     Users map[uuid.UUID]*models.User
     Bids  map[uuid.UUID]*models.Bid
 }
@@ -39,21 +39,21 @@ This allowed me to simplify the structures to the following:
 
 ```go
 type MapBiddingSystem struct {
-	Items map[uuid.UUID]*models.Item
+    Items map[uuid.UUID]*models.Item
     Users map[uuid.UUID]*models.User
 }
 
 type User struct {
-	Name       string
-	bids       map[uuid.UUID]*Bid
-	ItemsBid   []*Item
+    Name       string
+    bids       map[uuid.UUID]*Bid
+    ItemsBid   []*Item
 }
 
 type Item struct {
-	Name         string
-	bids         []*Bid
-	WinningBid   *Bid
-	MaxBidAmount float64
+    Name         string
+    bids         []*Bid
+    WinningBid   *Bid
+    MaxBidAmount float64
 }
 ```
 
